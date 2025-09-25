@@ -12,12 +12,15 @@
 #include "rectangle.h"
 using namespace std;
 
-Rectangle::Rectangle(double x, double y, double side_a, double side_b, const char* shapeName) : Square(x, y, side_a, shapeName) {
+Rectangle::Rectangle(double x, double y, double side_a, double side_b, const char* shapeName)
+    : Shape(x, y, shapeName),
+    Square(x, y, side_a, shapeName) {
     side_bM = side_b;
 }
 
 Rectangle& Rectangle::operator =(const Rectangle &rhs) {
     if (this != &rhs) {
+        Shape::operator=(rhs);
         Square::operator=(rhs);
         set_side_a(rhs.get_side_a());
         set_side_b(rhs.get_side_b());
@@ -25,7 +28,9 @@ Rectangle& Rectangle::operator =(const Rectangle &rhs) {
     return *this;
 }
 
-Rectangle::Rectangle(const Rectangle &source) : Square(source.getOrigin().getX(), source.getOrigin().getY(), source.get_side_a(), source.getName()) {
+Rectangle::Rectangle(const Rectangle &source)
+    : Shape(source.getOrigin().getX(), source.getOrigin().getY(), source.getName()),
+    Square(source.getOrigin().getX(), source.getOrigin().getY(), source.get_side_a(), source.getName()) {
     side_bM = source.side_bM;    
 }
 

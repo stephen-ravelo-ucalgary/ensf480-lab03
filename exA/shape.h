@@ -22,6 +22,9 @@ public:
     const Point &getOrigin() const;
     char *getName() const;
     void setName(const char* shapeName);
+
+    virtual double area() const = 0;
+    virtual double perimeter() const = 0;
     
     double distance(Shape &other);
     static double distance(Shape &s1, Shape &s2);

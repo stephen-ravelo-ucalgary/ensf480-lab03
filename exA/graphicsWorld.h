@@ -9,7 +9,7 @@
 #ifndef GRAPHICSWORLD_H
 #define GRAPHICSWORLD_H
 
-#include "rectangle.h"
+#include "curveCut.h"
 
 class GraphicsWorld {
     public:
