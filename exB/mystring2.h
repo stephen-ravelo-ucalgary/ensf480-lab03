@@ -1,5 +1,10 @@
-//File: mystring2.h
-// ENSF 480 - Lab 3
+/*
+ * File Name: mystring2.h
+ * Assignment: Lab 3 Exercise B
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang
+ * Submission Date: September 20, 2025
+ */
 
 
 #ifndef MYSTRING_H
@@ -61,6 +66,8 @@ class Mystring {
   //          Othrewise, extends the size of the charsM to s.lengthM+1, and copies 
   //          s into the charsM.
 
+  bool operator>(const Mystring& other) const;
+
  private:
 
   int lengthM; // the string length - number of characters excluding \0
@@ -69,14 +76,3 @@ class Mystring {
   // PROMISES: if s points to NULL terminates the program.
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-

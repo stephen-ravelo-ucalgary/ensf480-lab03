@@ -1,5 +1,10 @@
-// iterator.cpp
-// ENSF 480 - Fall 2022 - Lab 3, Ex B
+/*
+ * File Name: iterator.cpp
+ * Assignment: Lab 3 Exercise B
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang
+ * Submission Date: September 20, 2025
+ */
 
 #include <iostream>
 #include <assert.h>
@@ -7,7 +12,7 @@
 
 using namespace std;
 
-
+template <class T>
 class Vector {
 public: 
 
@@ -20,35 +25,35 @@ public:
   public:
     VectIter(Vector& x);
  
-    int operator++();
+    T operator++();
     //PROMISES: increments the iterator's indes and return the 
     //          value of the element at the index position. If
     //          index exceeds the size of the array it will 
     //          be set to zero. Which means it will be circulated
     //          back to the first element of the vector.
 
-    int  operator++(int);
+    T operator++(int);
     // PRIMISES: returns the value of the element at the index
     //           position, then increments the index. If
     //           index exceeds the size of the array it will 
     //           be set to zero. Which means it will be circulated
     //           back to the first element of the vector.
 
-    int  operator--();
+    T operator--();
     // PROMISES: decrements the iterator index, and return the
     //           the value of the element at the index. If
     //           index is less than zero it will be set to the 
     //           last element in the aray. Which means it will be
     //           circulated to the last element of the vector.
 
-    int  operator--(int);
+    T operator--(int);
     // PRIMISES: returns the value of the element at the index
     //           position, then decrements the index. If
     //           index is less than zero it will be set to the 
     //           last element in the aray. Which means it will be
     //           circulated to the last element of the vector.
 
-    int operator *();
+    T operator *();
     // PRIMISES: returns the value of the element at the current 
     //           index position.
   };
@@ -56,7 +61,7 @@ public:
   Vector(int sz); 
   ~Vector();
 
-  int & operator[](int i);
+  T & operator[](int i);
   // PRIMISES: returns existing value in the ith element of 
   //           array or sets a new value to  the ith element in
   //           array. 
@@ -65,14 +70,14 @@ public:
   // PRIMISES: sorts the vector values in ascending order. 
 	
 private:
-  int *array;               // points to the first element of an array of T
+  T *array;               // points to the first element of an array of T
   int size;               // size of array
-  void swap(int&, int &); // swaps the values of two elements in array
+  void swap(T&, T&); // swaps the values of two elements in array
 public:
 };
 
-
-void Vector::ascending_sort()
+template <class T>
+void Vector<T>::ascending_sort()
 {
 	for(int i=0; i< size-1; i++)
 		for(int j=i+1; j < size; j++)
@@ -80,65 +85,113 @@ void Vector::ascending_sort()
 				swap(array[i], array[j]);
 }
 
-void Vector::swap(int& a, int& b)
+template <>
+void Vector<const char*>::ascending_sort() {
+  for(int i=0; i< size-1; i++)
+		for(int j=i+1; j < size; j++)
+			if(strcmp(array[i], array[j]) > 0)
+				swap(array[i], array[j]);
+}
+
+template <class T>
+void Vector<T>::swap(T& a, T& b)
 {
-	int tmp = a;
+	T tmp = a;
 	a = b;
 	b = tmp;
 }
 
-int Vector::VectIter::operator *()
+template <class T>
+T Vector<T>::VectIter::operator *()
 {
   return v -> array[index];
 }
 
-
-Vector::VectIter::VectIter(Vector& x)
+template <class T>
+Vector<T>::VectIter::VectIter(Vector& x)
 {
   v = &x;
   index = 0;
 }
 
-
-
-Vector::Vector(int sz)
+template <class T>
+Vector<T>::Vector(int sz)
 {
   size=sz;
-  array = new int [sz];
+  array = new T [sz];
   assert (array != NULL);
 }
 
-
-Vector::~Vector()
+template <class T>
+Vector<T>::~Vector()
 {
   delete [] array;
   array = NULL;
+  size = 0;
 }
 
 
-
-int & Vector ::operator [] (int i)
+template <class T>
+T & Vector<T>::operator [] (int i)
 {
   return array[i];
+}
+
+template <class T>
+T Vector<T>::VectIter::operator++() {
+  index++;
+  if(index == v->size) {
+    index = 0;
+  }
+  return v->array[index];
+}
+
+template <class T>
+T Vector<T>::VectIter::operator++(int) {
+    T val = v->array[index];
+    index++;
+    if(index == v->size) {
+      index = 0;
+    }
+    return val;
+}
+
+template <class T>
+T Vector<T>::VectIter::operator--() {
+  index--;
+  if(index < 0) {
+    index = v->size - 1;
+  }
+  return v->array[index];
+}
+
+template <class T>
+T Vector<T>::VectIter::operator--(int) {
+  T val = v->array[index];
+  index--;
+  if(index < 0) {
+    index = v->size - 1;
+  }
+  return val;
 }
 
 
 int main()
 {
 
- Vector x(3);
+ Vector <int> x(3);
  x[0] = 999;
  x[1] = -77;
  x[2] = 88;
 
- Vector::VectIter iter(x);
+ Vector<int>::VectIter iter(x);
 
  cout << "\n\nThe first element of vector x contains: " << *iter; 
 
  // the code between the  #if 0 and #endif is ignored by
  // compiler. If you change it to #if 1, it will be compiled
  
-#if 0
+#if 1
 	cout << "\nTesting an <int> Vector: " << endl;
 	
 	cout << "\n\nTesting sort";
@@ -165,7 +218,7 @@ int main()
 	Vector<Mystring> y(3);
 	y[0] = "Bar";
 	y[1] = "Foo";
-	y[2] = "All";;
+	y[2] = "All";
 	
 	Vector<Mystring>::VectIter iters(y);
 	
@@ -191,7 +244,7 @@ int main()
 	Vector<const char*> z(3);
 	z[0] = "Orange";
 	z[1] = "Pear";
-	z[2] = "Apple";;
+	z[2] = "Apple";
 	
 	Vector<const char*>::VectIter iterchar(z);
 	
@@ -206,15 +259,3 @@ int main()
 	
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
