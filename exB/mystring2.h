@@ -30,6 +30,8 @@ class Mystring {
   // PROMISES: to make this-object (object that this is pointing to, as  a copy 
   //           of rhs.
 
+  bool operator>(const Mystring &rhs);
+
   int length() const;
   // PROMISES: Return value is number of chars in charsM.
 
