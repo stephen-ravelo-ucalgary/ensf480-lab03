@@ -1,6 +1,11 @@
-//  mystring2.cpp
-// ENSF 480 - Lab 3
-// M. Moussavi
+/*
+ * File Name: mystring2.cpp
+ * Assignment: Lab 3 Exercise B
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang
+ * Submission Date: September 28, 2025
+ */
+
 #include "mystring2.h"
 #include <string.h>
 #include <iostream>
