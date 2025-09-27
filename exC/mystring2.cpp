@@ -110,17 +110,6 @@ std::ostream& operator <<(std::ostream& os, const Mystring& s)
     return os << s.charsM;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+bool Mystring::operator>(const Mystring& other) const {
+  return strcmp(this->charsM, other.charsM) > 0;
+}

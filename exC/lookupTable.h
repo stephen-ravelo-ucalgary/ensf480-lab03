@@ -23,30 +23,35 @@ using namespace std;
 //    is introduced which represents a key/data pair.
 
 
-typedef int LT_Key; 
-typedef Customer LT_Datum;
- 
+// typedef int LT_Key; 
+// typedef Customer LT_Datum;
+
+template <class T1, class T2>
+class LookupTable;
+
+template <class T1, class T2>
+std::ostream& operator<< (std::ostream& os, const LookupTable<T1, T2>& lt);
+
+template <class T1, class T2>
 struct Pair 
 {
-  Pair(LT_Key keyA,LT_Datum datumA):key(keyA), datum(datumA)
-  {
-  } 
-  
-  LT_Key key;
-  LT_Datum datum;
+  T1 key;
+  T2 datum;
+  Pair(T1 keyA, T2 datumA):key(keyA), datum(datumA) {} 
 };
 
-
+template <class T1, class T2>
 class LT_Node {
-  friend class LookupTable;
+  friend class LookupTable<T1, T2>;
 private:
-  Pair pairM;
+  Pair<T1, T2> pairM;
   LT_Node *nextM;
 
   // This ctor should be convenient in insert and copy operations.
-  LT_Node(const Pair& pairA, LT_Node *nextA);
+  LT_Node(const Pair<T1, T2>& pairA, LT_Node *nextA);
 };
 
+template <class T1, class T2>
 class LookupTable {
  public:
 
@@ -59,9 +64,9 @@ class LookupTable {
   public:
     Iterator():LT(0){}
     Iterator(LookupTable & x): LT(&x){}
-    const LT_Datum&  operator *();
-    const LT_Datum& operator ++();
-    const LT_Datum& operator ++(int);
+    const T2&  operator *();
+    const T2& operator ++();
+    const T2& operator ++(int);
     int operator !();
 
     void step_fwd(){  assert(LT->cursor_ok());
@@ -83,15 +88,15 @@ class LookupTable {
   //   Returns 1 if the cursor is attached to a key/datum pair,
   //   and 0 if the cursor is in the off-list state.
 
-  const LT_Key& cursor_key() const;
+  const T1& cursor_key() const;
   // REQUIRES: cursor_ok()
   // PROMISES: Returns key of key/datum pair to which cursor is attached.
 
-  const LT_Datum& cursor_datum() const;
+  const T2& cursor_datum() const;
   // REQUIRES: cursor_ok()
   // PROMISES: Returns datum of key/datum pair to which cursor is attached.
 
-  void insert(const Pair& pariA);
+  void insert(const Pair<T1, T2>& pariA);
   // PROMISES:
   //   If keyA matches a key in the table, the datum for that
   //   key is set equal to datumA.
@@ -99,14 +104,14 @@ class LookupTable {
   //   used to create a new key/datum pair in the table.
   //   In either case, the cursor goes to the off-list state.
 
-  void remove(const LT_Key& keyA);
+  void remove(const T1& keyA);
   // PROMISES:
   //   If keyA matches a key in the table, the corresponding
   //   key/datum pair is removed from the table.
   //   If keyA does not match an existing key, the table is unchanged.
   //   In either case, the cursor goes to the off-list state.
 
-  void find(const LT_Key& keyA);
+  void find(const T1& keyA);
   // PROMISES:
   //   If keyA matches a key in the table, the cursor is attached
   //   to the corresponding key/datum pair.
@@ -127,12 +132,13 @@ class LookupTable {
   void make_empty();
   // PROMISES: size() == 0.
 
-  friend  ostream& operator << (ostream& os, const LookupTable& lt);
+  template <class A, class B>
+  friend std::ostream& operator<< (std::ostream& os, const LookupTable<A, B>& lt);
 
  private:
   int sizeM;
-  LT_Node *headM;
-  LT_Node *cursorM;
+  LT_Node<T1, T2> *headM;
+  LT_Node<T1, T2> *cursorM;
 
   void destroy();
   // Deallocate all nodes, set headM to zero.
@@ -144,27 +150,33 @@ class LookupTable {
 
 #endif
 
-LookupTable& LookupTable::begin(){
+template <class T1, class T2>
+LookupTable<T1, T2>& LookupTable<T1, T2>::begin(){
   cursorM = headM;
   return *this;
 }
 
-LT_Node::LT_Node(const Pair& pairA, LT_Node *nextA)
+
+template <class T1, class T2>
+LT_Node<T1, T2>::LT_Node(const Pair<T1, T2>& pairA, LT_Node<T1, T2> *nextA)
   : pairM(pairA), nextM(nextA)
 {
 }
 
-LookupTable::LookupTable()
+template <class T1, class T2>
+LookupTable<T1, T2>::LookupTable()
   : sizeM(0), headM(0), cursorM(0)
 {
 }
 
-LookupTable::LookupTable(const LookupTable& source)
+template <class T1, class T2>
+LookupTable<T1, T2>::LookupTable(const LookupTable<T1, T2>& source)
 {
   copy(source);
 }
 
-LookupTable& LookupTable::operator =(const LookupTable& rhs)
+template <class T1, class T2>
+LookupTable<T1, T2>& LookupTable<T1, T2>::operator =(const LookupTable<T1, T2>& rhs)
 {
   if (this != &rhs) {
     destroy();
@@ -173,38 +185,44 @@ LookupTable& LookupTable::operator =(const LookupTable& rhs)
   return *this;
 }
 
-LookupTable::~LookupTable()
+template <class T1, class T2>
+LookupTable<T1, T2>::~LookupTable()
 {
   destroy();
 }
 
-int LookupTable::size() const
+template <class T1, class T2>
+int LookupTable<T1, T2>::size() const
 {
   return sizeM;
 }
 
-int LookupTable::cursor_ok() const
+template <class T1, class T2>
+int LookupTable<T1, T2>::cursor_ok() const
 {
   return cursorM != 0;
 }
 
-const LT_Key& LookupTable::cursor_key() const
+template <class T1, class T2>
+const T1& LookupTable<T1, T2>::cursor_key() const
 {
   assert(cursor_ok());
   return cursorM->pairM.key;
 }
 
-const LT_Datum& LookupTable::cursor_datum() const
+template <class T1, class T2>
+const T2& LookupTable<T1, T2>::cursor_datum() const
 {
   assert(cursor_ok());
   return cursorM->pairM.datum;
 }
 
-void LookupTable::insert(const Pair& pairA)
+template <class T1, class T2>
+void LookupTable<T1, T2>::insert(const Pair<T1, T2>& pairA)
 {
   // Add new node at head?
   if (headM == 0 || pairA.key < headM->pairM.key) {
-    headM = new LT_Node(pairA, headM);
+    headM = new LT_Node<T1, T2>(pairA, headM);
     sizeM++;
   }
 
@@ -215,8 +233,8 @@ void LookupTable::insert(const Pair& pairA)
   // Have to search ...
 
   else {
-    LT_Node* before= headM;
-    LT_Node* after=headM->nextM;
+    LT_Node<T1, T2>* before= headM;
+    LT_Node<T1, T2>* after=headM->nextM;
 
     while(after!=NULL && (pairA.key > after->pairM.key))
       {
@@ -230,27 +248,28 @@ void LookupTable::insert(const Pair& pairA)
       }
     else
       {
-	before->nextM = new LT_Node (pairA, before->nextM);
+	before->nextM = new LT_Node<T1, T2> (pairA, before->nextM);
 	sizeM++;
       }
   }
 }
 
-void LookupTable::remove(const LT_Key& keyA)
+template <class T1, class T2>
+void LookupTable<T1, T2>::remove(const T1& keyA)
 {
 
   if (headM == 0 || keyA < headM->pairM.key)
     return;
 
-  LT_Node* doomed_node = 0;
+  LT_Node<T1, T2>* doomed_node = 0;
   if (keyA == headM->pairM.key) {
     doomed_node = headM;
     headM = headM->nextM;
     sizeM--;
   }
   else {
-    LT_Node      *before = headM;
-    LT_Node *maybe_doomed = headM->nextM;
+    LT_Node<T1, T2>*before = headM;
+    LT_Node<T1, T2> *maybe_doomed = headM->nextM;
     while(maybe_doomed != 0 && keyA > maybe_doomed->pairM.key) {
       before = maybe_doomed;
       maybe_doomed = maybe_doomed->nextM;
@@ -265,9 +284,10 @@ void LookupTable::remove(const LT_Key& keyA)
   delete doomed_node;           // Does nothing if doomed_node == 0.
 }
 
-void LookupTable::find(const LT_Key& keyA)
+template <class T1, class T2>
+void LookupTable<T1, T2>::find(const T1& keyA)
 {
-  LT_Node *ptr=headM;
+  LT_Node<T1, T2> *ptr=headM;
   while (ptr != NULL && ptr->pairM.key != keyA)
     {
      ptr=ptr->nextM;
@@ -276,28 +296,32 @@ void LookupTable::find(const LT_Key& keyA)
    cursorM = ptr;
 }
 
-void LookupTable::go_to_first()
+template <class T1, class T2>
+void LookupTable<T1, T2>::go_to_first()
 {
   cursorM = headM;
 }
 
-void LookupTable::step_fwd()
+template <class T1, class T2>
+void LookupTable<T1, T2>::step_fwd()
 {
   assert(cursor_ok());
   cursorM = cursorM->nextM;
 }
 
-void LookupTable::make_empty()
+template <class T1, class T2>
+void LookupTable<T1, T2>::make_empty()
 {
   destroy();
   sizeM = 0;
   cursorM = 0;
 }
 
-void LookupTable::destroy()
+template <class T1, class T2>
+void LookupTable<T1, T2>::destroy()
 {
 
-  LT_Node *ptr = headM;
+  LT_Node<T1, T2> *ptr = headM;
   while (ptr!=NULL)
     {
       headM=headM->nextM;
@@ -309,7 +333,8 @@ void LookupTable::destroy()
   sizeM=0;
 }
 
-void LookupTable::copy(const LookupTable& source)
+template <class T1, class T2>
+void LookupTable<T1, T2>::copy(const LookupTable<T1, T2>& source)
 {
 
   headM=0;
@@ -318,16 +343,17 @@ void LookupTable::copy(const LookupTable& source)
   if(source.headM ==0)
     return;
  
-  for(LT_Node *p = source.headM; p != 0; p=p->nextM)
+  for(LT_Node<T1, T2> *p = source.headM; p != 0; p=p->nextM)
     {
-      insert(Pair (p->pairM.key, p->pairM.datum));
+      insert(Pair<T1, T2>(p->pairM.key, p->pairM.datum));
       if(source.cursorM == p)
 	find(p->pairM.key);
     }
 
 }
 
-ostream& operator <<   (ostream& os, const LookupTable& lt)
+template <class T1, class T2>
+std::ostream& operator<<(std::ostream& os, const LookupTable<T1, T2>& lt)
 {
   if (lt.cursor_ok())
     os <<lt.cursor_key() << "  " << lt.cursor_datum();
@@ -337,21 +363,24 @@ ostream& operator <<   (ostream& os, const LookupTable& lt)
   return os;
 }
 
-const LT_Datum& LookupTable::Iterator::operator *()
+template <class T1, class T2>
+const T2& LookupTable<T1, T2>::Iterator::operator *()
 {
   assert(LT ->cursor_ok());
   return LT->cursor_datum();
 }
 
-const LT_Datum& LookupTable::Iterator::operator ++()
+template <class T1, class T2>
+const T2& LookupTable<T1, T2>::Iterator::operator ++()
 {
   assert(LT->cursor_ok());
-  const LT_Datum & x = LT->cursor_datum();
+  const T2 & x = LT->cursor_datum();
   LT->step_fwd();
   return x;
 }
 
-const LT_Datum& LookupTable::Iterator::operator ++(int)
+template <class T1, class T2>
+const T2& LookupTable<T1, T2>::Iterator::operator ++(int)
 {
   assert(LT->cursor_ok());
  
@@ -359,9 +388,8 @@ const LT_Datum& LookupTable::Iterator::operator ++(int)
   return LT->cursor_datum();
 }
 
-int LookupTable::Iterator::operator!()
+template <class T1, class T2>
+int LookupTable<T1, T2>::Iterator::operator!()
 {
   return (LT->cursor_ok());
 }
-
-

@@ -61,6 +61,8 @@ class Mystring {
   //          Othrewise, extends the size of the charsM to s.lengthM+1, and copies 
   //          s into the charsM.
 
+  bool operator>(const Mystring& other) const;
+
  private:
 
   int lengthM; // the string length - number of characters excluding \0
@@ -69,14 +71,3 @@ class Mystring {
   // PROMISES: if s points to NULL terminates the program.
 };
 #endif
-
-
-
-
-
-
-
-
-
-
-
