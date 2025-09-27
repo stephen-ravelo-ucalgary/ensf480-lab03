@@ -1,6 +1,10 @@
-
-// ENSF 480 - Lab 3, Ex C
-// M. Moussavi
+/*
+ * File Name: mainLab3ExC.cpp
+ * Assignment: Lab 3 Exercise C
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang
+ * Submission Date: September 28, 2025
+ */
 
 #include <assert.h>
 #include <iostream>
